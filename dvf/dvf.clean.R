@@ -17,3 +17,13 @@ library(data.table)
 library(arrow)
 library(janitor)
 
+save_dvf_parquet <- function(annee){
+  data <- fread(paste0("dvf/data/valeursfoncieres-",annee,".txt"),sep = "|")
+  
+  data <- clean_names(data)
+  data[,valeur_fonciere := gsub(pattern = ",",replacement = ".",x = valeur_fonciere)][,valeur_fonciere := as.numeric(valeur_fonciere)]
+  data[,annee := annee]
+  write_parquet(data,paste0("dvf/data/valeurs_foncieres-",annee,".parquet"))
+  
+}
+
